@@ -12,7 +12,6 @@
         <h5 class="card-title">
            {{ $viewData["product"]["name"]}}
         </h5>
-        <p class="card-text">{{ $viewData["product"]["description"] }}</p>
         <p class="card-text 
             @if ($viewData["product"]["price"] > 80) 
                 text-danger 
