@@ -17,8 +17,12 @@
                 text-danger 
             @endif
         ">
-            {{ $viewData["price"] }}
+            {{ $viewData["product"]["price"] }}
         </p>
+        <h6>Comentarios:</h6>
+        @foreach($viewData["product"]->comments as $comment)
+          - {{ $comment->getDescription() }}<br />
+        @endforeach
       </div>
     </div>
   </div>

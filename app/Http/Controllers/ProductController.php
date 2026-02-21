@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use App\Models\Product;
 
 class ProductController extends Controller
 {
@@ -45,7 +45,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|gt:0',
         ]);
 
-        Product::create($request->only(["name","price"]));
+        Product::create($request->only(['name', 'price']));
 
         return back();
 
