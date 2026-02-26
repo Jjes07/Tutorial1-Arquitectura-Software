@@ -9,26 +9,54 @@
 </head>
 
 <body>
-      <!-- header -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-secondary py-4">
+  <!-- header -->
+  <nav class="navbar navbar-dark bg-secondary py-3">
     <div class="container">
-      <a class="navbar-brand" href="{{ route('home.index') }}">Online Store</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="navbar-brand fw-bold" href="{{ route('home.index') }}">
+        Online Store
+      </a>
+
+      <!-- Hamburger button -->
+      <button class="navbar-toggler"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#mainMenu"
+              aria-controls="mainMenu">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav ms-auto">
-          <a class="nav-link active" href="{{ route('home.index') }}">Home</a>
-          <a class="nav-link active" href="{{ route('home.about') }}">About</a>
-          <a class="nav-link active" href="{{ route('home.contact') }}">Contact</a>
-          <a class="nav-link active" href="{{ route('product.index') }}">Products</a>
-          <a class="nav-link active" href="{{ route('cart.index') }}">Cart</a>
-          <a class="nav-link active" href="{{ route('product.create') }}">Create Products</a>
-        </div>
-      </div>
     </div>
   </nav>
+
+  <!-- Offcanvas menu (right side) -->
+  <div class="offcanvas offcanvas-end text-bg-dark"
+      tabindex="-1"
+      id="mainMenu"
+      aria-labelledby="mainMenuLabel">
+
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="mainMenuLabel">Menu</h5>
+      <button type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="offcanvas">
+      </button>
+    </div>
+
+    <div class="offcanvas-body">
+      <nav class="nav flex-column gap-2">
+        <a class="nav-link text-white" href="{{ route('home.index') }}">Home</a>
+        <a class="nav-link text-white" href="{{ route('home.about') }}">About</a>
+        <a class="nav-link text-white" href="{{ route('home.contact') }}">Contact</a>
+        <a class="nav-link text-white" href="{{ route('product.index') }}">Products</a>
+        <a class="nav-link text-white" href="{{ route('cart.index') }}">Cart</a>
+
+        <hr class="text-secondary">
+
+        <a class="nav-link text-white" href="{{ route('product.create') }}">Create Products</a>
+        <a class="nav-link text-white" href="{{ route('image.index') }}">Image Storage</a>
+        <a class="nav-link text-white" href="{{ route('imagenotdi.index') }}">Image Storage (Not DI)</a>
+      </nav>
+    </div>
+  </div>
 
   <header class="masthead bg-primary text-white text-center py-4">
     <div class="container d-flex align-items-center flex-column">
