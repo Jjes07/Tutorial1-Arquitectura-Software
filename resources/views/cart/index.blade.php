@@ -12,7 +12,9 @@
           Id: {{ $key }} - 
           Name: {{ $product["name"] }} -
           Price: {{ $product["price"] }} -
-          <a href="{{ route('cart.add', ['id'=> $key]) }}">Add to cart</a>
+          <a href="{{ route('cart.add', ['id'=> $key]) }}">
+            <button class="btn btn-outline-primary mb-2">Add to cart</button>
+          </a>
         </li>
       @endforeach
     </ul>
@@ -22,16 +24,25 @@
   <div class="row justify-content-center">
     <div class="col-md-12">
     <h1>Products in cart</h1>
-      <ul>
+    @if (count($viewData["cartProducts"]) > 0)
+    <ul>
         @foreach($viewData["cartProducts"] as $key => $product)
           <li>
             Id: {{ $key }} - 
             Name: {{ $product["name"] }} -
-            Price: {{ $product["price"] }}
+            Price: {{ $product["price"] }} - 
+            <a href="{{ route('cart.remove', ['id'=>$key]) }}">
+                <button class="btn btn-outline-danger mb-2">Remove from cart</button>
+            </a>
           </li>
         @endforeach
       </ul>
-      <a href="{{ route('cart.removeAll') }}">Remove all products from cart</a>
+      <a href="{{ route('cart.removeAll') }}">
+        <button class="btn btn-warning mb-2">Remove all products from cart</button>
+      </a>
+    @else
+      <h5 class="mx-4 text-secondary">No products in cart</h5>
+    @endif
     </div>
   </div>
 </div>

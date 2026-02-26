@@ -47,4 +47,13 @@ class CartController extends Controller
 
         return back();
     }
+
+    public function remove(string $id, Request $request): RedirectResponse
+    {
+        $cartProductData = $request->session()->get('cart_product_data');
+        unset($cartProductData[$id]);
+        $request->session()->put('cart_product_data', $cartProductData);
+
+        return back();
+    }
 }
