@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductCollection;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ProductApiControllerV3 extends Controller
 {
@@ -19,5 +20,18 @@ class ProductApiControllerV3 extends Controller
     {
         $products = new ProductCollection(Product::paginate(4));
         return response()->json($products, 200);
+    }
+
+    public function save(Request $request): JsonResponse
+    {
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required|numeric|gt:0',
+        ]);
+
+        Product::create($request->only(['name', 'price']));
+
+        return response()->json(['message' => 'Product created successfully'], 201);
+
     }
 }
