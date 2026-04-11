@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Productos - POST</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+        }
+        .response pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .error {
+            border-left-color: #f44336;
+            background-color: #ffebee;
+        }
+        .success {
+            border-left-color: #4CAF50;
+            background-color: #e8f5e9;
+        }
+        .product-list {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .product-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .product-item:last-child {
+            border-bottom: none;
+        }
+        .loading {
+            display: none;
+            color: #666;
+            margin-top: 10px;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API REST - Crear Nuevo Producto</h1>
+        
+        <div class="form-group">
+            <label for="apiUrl">URL de la API:</label>
+            <input type="text" id="apiUrl" value="http://127.0.0.1:8000/api/v3/products" class="form-control">
+        </div>
+
+        <h2>Crear Producto</h2>
+        <form id="productForm">
+            <div class="form-group">
+                <label for="name">Nombre del Producto:</label>
+                <input type="text" id="name" name="name" required placeholder="Ej: Laptop Gaming">
+            </div>
+            
+            <div class="form-group">
+                <label for="price">Precio:</label>
+                <input type="number" id="price" name="price" required step="0.01" placeholder="Ej: 999.99">
+            </div>
+            
+            <button type="submit">Crear Producto</button>
+        </form>
+
+        <div id="loading" class="loading">Procesando...</div>
+        
+        <div id="response"></div>
+
+        <h2>Lista de Productos</h2>
+        <button id="loadProductsBtn">Cargar Productos</button>
+        <div id="productList" class="product-list" style="margin-top: 15px;"></div>
+    </div>
+
+    <script>
+        const apiUrl = document.getElementById('apiUrl');
+        const productForm = document.getElementById('productForm');
+        const responseDiv = document.getElementById('response');
+        const loadingDiv = document.getElementById('loading');
+        const loadProductsBtn = document.getElementById('loadProductsBtn');
+        const productListDiv = document.getElementById('productList');
+
+        // Función para mostrar respuesta
+        function showResponse(data, isError = false) {
+            responseDiv.innerHTML = '';
+            const responseContainer = document.createElement('div');
+            responseContainer.className = `response ${isError ? 'error' : 'success'}`;
+            
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'status';
+            statusDiv.innerHTML = isError ? '❌ Error:' : '✅ Éxito:';
+            
+            const pre = document.createElement('pre');
+            pre.textContent = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
+            
+            responseContainer.appendChild(statusDiv);
+            responseContainer.appendChild(pre);
+            responseDiv.appendChild(responseContainer);
+        }
+
+        // Función para cargar productos
+        async function loadProducts() {
+            try {
+                productListDiv.innerHTML = '<div style="text-align:center;">Cargando productos...</div>';
+                
+                const response = await fetch('http://127.0.0.1:8000/api/v3/products');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    productListDiv.innerHTML = '';
+                    data.data.forEach(product => {
+                        const productDiv = document.createElement('div');
+                        productDiv.className = 'product-item';
+                        productDiv.innerHTML = `
+                            <strong>ID:</strong> ${product.id} | 
+                            <strong>Nombre:</strong> ${product.name} | 
+                            <strong>Precio:</strong> $${product.price}
+                        `;
+                        productListDiv.appendChild(productDiv);
+                    });
+                    
+                    // Mostrar información adicional
+                    if (data.additionalData) {
+                        const infoDiv = document.createElement('div');
+                        infoDiv.style.marginTop = '15px';
+                        infoDiv.style.padding = '10px';
+                        infoDiv.style.backgroundColor = '#e3f2fd';
+                        infoDiv.style.borderRadius = '4px';
+                        infoDiv.style.fontSize = '12px';
+                        infoDiv.innerHTML = `
+                            <strong>Tienda:</strong> ${data.additionalData.storeName}<br>
+                            <strong>Link:</strong> <a href="${data.additionalData.storeProductsLink}" target="_blank">${data.additionalData.storeProductsLink}</a>
+                        `;
+                        productListDiv.appendChild(infoDiv);
+                    }
+                } else {
+                    productListDiv.innerHTML = '<div style="text-align:center; color:#666;">No hay productos disponibles</div>';
+                }
+            } catch (error) {
+                productListDiv.innerHTML = `<div style="text-align:center; color:#f44336;">Error al cargar productos: ${error.message}</div>`;
+            }
+        }
+
+        // Enviar producto por POST
+        productForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const price = parseFloat(document.getElementById('price').value);
+            
+            if (!name || !price || price <= 0) {
+                showResponse('Por favor, complete todos los campos correctamente (precio mayor a 0)', true);
+                return;
+            }
+            
+            // Mostrar loading
+            loadingDiv.style.display = 'block';
+            responseDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch(apiUrl.value, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        price: price
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResponse(data, false);
+                    productForm.reset(); // Limpiar formulario
+                    loadProducts(); // Recargar lista de productos
+                } else {
+                    showResponse(data, true);
+                }
+            } catch (error) {
+                showResponse(`Error de conexión: ${error.message}. Asegúrate de que el servidor Laravel esté corriendo.`, true);
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        });
+        
+        // Cargar productos al hacer clic en el botón
+        loadProductsBtn.addEventListener('click', loadProducts);
+        
+        // Cargar productos automáticamente al iniciar
+        loadProducts();
+    </script>
+</body>
+</html>
